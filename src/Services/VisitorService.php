@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Nette\Utils\DateTime;
 use Ramsey\Uuid\Uuid;
-use Src\Auth\Services\IpInfoService;
 use Symfony\Component\HttpFoundation\Cookie;
 
 class VisitorService
@@ -54,10 +53,15 @@ class VisitorService
     {
         Log::shareContext(
             [
-                'v'  => $this->visitor->token,
+                'vi' => $this->visitor->token,
+                'ne' => $this->visitor->new,
                 'ip' => $this->visitor->ip,
-                'c'  => $this->visitor->country ?? 'N/A',
-                'r'  => $this->visitor->region ?? 'N/A',
+                'co' => $this->visitor->country ?? '',
+                're' => $this->visitor->region ?? '',
+                'ci' => $this->visitor->city ?? '',
+                'po' => $this->visitor->postcode ?? '',
+                'lo' => $this->visitor->location ?? '',
+                'ua' => $this->visitor->userAgent ?? '',
             ],
         );
 
