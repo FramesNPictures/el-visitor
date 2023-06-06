@@ -20,5 +20,12 @@
             "name": "Chris Cynarski",
             "email": "chris@cynarski.net"
         }
-    ]
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "FNP\\ElVisitor\\ElVisitorModule"
+            ]
+        }
+    }
 }
