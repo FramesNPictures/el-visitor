@@ -5,6 +5,7 @@ namespace FNP\ElVisitor\Services;
 use FNP\ElVisitor\Models\Visitor;
 use FNP\ElVisitor\Sources\IpInfo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Nette\Utils\DateTime;
 use Ramsey\Uuid\Uuid;
 use Src\Auth\Services\IpInfoService;
@@ -51,6 +52,16 @@ class VisitorService
 
     public function visitor(): Visitor
     {
+        Log::shareContext(
+            [
+                'v'  => $this->visitor->token,
+                'ip' => $this->visitor->ip,
+                'c'  => $this->visitor->country ?? 'N/A',
+                'r'  => $this->visitor->region ?? 'N/A',
+            ],
+        );
+
+
         return $this->visitor;
     }
 
