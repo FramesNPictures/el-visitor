@@ -41,15 +41,15 @@ class VisitorService
 
         // User agent parsing
         $parser                        = new Parser(getallheaders());
-        $this->visitor->browserName    = $parser->browser->name;
-        $this->visitor->browserVersion = $parser->browser->version->toString();
-        $this->visitor->browserEngine  = $parser->engine->name;
-        $this->visitor->osName         = $parser->os->name;
-        $this->visitor->osVersion      = $parser->os->version->toString();
-        $this->visitor->osAlias        = $parser->os->alias;
-        $this->visitor->osFamily       = $parser->os->family->name;
-        $this->visitor->deviceModel    = $parser->device->model;
-        $this->visitor->deviceMake     = $parser->device->manufacturer;
+        $this->visitor->browserName    = $parser?->browser?->name;
+        $this->visitor->browserVersion = $parser?->browser?->version?->toString();
+        $this->visitor->browserEngine  = $parser?->engine?->name;
+        $this->visitor->osName         = $parser?->os?->name;
+        $this->visitor->osVersion      = $parser?->os?->version?->toString();
+        $this->visitor->osAlias        = $parser?->os?->alias;
+        $this->visitor->osFamily       = $parser?->os?->family?->name;
+        $this->visitor->deviceModel    = $parser?->device?->model;
+        $this->visitor->deviceMake     = $parser?->device?->manufacturer;
 
 
         // IpInfo
