@@ -18,6 +18,7 @@ class Visitor
     public ?string $osFamily       = null;
     public ?string $deviceModel    = null;
     public ?string $deviceMake     = null;
+    public ?string $deviceType = null;
     public ?string $referer        = null;
     public ?string $city           = null;
     public ?string $region         = null;

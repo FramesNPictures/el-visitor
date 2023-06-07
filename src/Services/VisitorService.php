@@ -50,6 +50,7 @@ class VisitorService
         $this->visitor->osFamily       = $parser?->os?->family?->name;
         $this->visitor->deviceModel    = $parser?->device?->model;
         $this->visitor->deviceMake     = $parser?->device?->manufacturer;
+        $this->visitor->deviceType     = $parser?->device->type;
 
 
         // IpInfo
@@ -76,13 +77,5 @@ class VisitorService
                 '/',
             ),
         );
-    }
-
-    /**
-     * @return array
-     */
-    public function getIps(): array
-    {
-        return $ips;
     }
 }
