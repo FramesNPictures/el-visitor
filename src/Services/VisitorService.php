@@ -3,12 +3,11 @@
 namespace FNP\ElVisitor\Services;
 
 use FNP\ElVisitor\Models\Visitor;
-use FNP\ElVisitor\Sources\IpInfo;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Nette\Utils\DateTime;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Cookie;
+use WhichBrowser\Parser;
 
 class VisitorService
 {
@@ -40,8 +39,21 @@ class VisitorService
         $this->visitor->uri       = $request->getUri();
         $this->visitor->referer   = $request->headers->get('referer');
 
+        // User agent parsing
+        $parser                        = new Parser(getallheaders());
+        $this->visitor->browserName    = $parser->browser->name;
+        $this->visitor->browserVersion = $parser->browser->version->toString();
+        $this->visitor->browserEngine  = $parser->engine->name;
+        $this->visitor->osName         = $parser->os->name;
+        $this->visitor->osVersion      = $parser->os->version->toString();
+        $this->visitor->osAlias        = $parser->os->alias;
+        $this->visitor->osFamily       = $parser->os->family->name;
+        $this->visitor->deviceModel    = $parser->device->model;
+        $this->visitor->deviceMake     = $parser->device->manufacturer;
+
+
         // IpInfo
-        $ipSourceClass = config('visitor.ip.source', IpInfo::class);
+        $ipSourceClass = config('visitor.ip.source');
 
         if ($ipSourceClass) {
             $ipSource = new $ipSourceClass();
@@ -51,21 +63,6 @@ class VisitorService
 
     public function visitor(): Visitor
     {
-        Log::shareContext(
-            [
-                'vi' => $this->visitor->token,
-                'ne' => $this->visitor->new,
-                'ip' => $this->visitor->ip,
-                'co' => $this->visitor->country ?? '',
-                're' => $this->visitor->region ?? '',
-                'ci' => $this->visitor->city ?? '',
-                'po' => $this->visitor->postcode ?? '',
-                'lo' => $this->visitor->location ?? '',
-                'ua' => $this->visitor->userAgent ?? '',
-            ],
-        );
-
-
         return $this->visitor;
     }
 
