@@ -1,11 +1,16 @@
 <?php
 
 return [
-    // Name of the visitor token cookie
+    // Visitor Token cookie name
     "cookie" => "APP-V",
 
-    "ip" => [
-        // IP Source Class
-        'source' => \FNP\ElVisitor\Sources\IpInfo::class,
+    "extensions" => [
+        \FNP\ElVisitor\Extensions\CheckIpInfo::class,
+        \FNP\ElVisitor\Extensions\CheckMobileBrowser::class,
+        \FNP\ElVisitor\Extensions\CheckBotCrowler::class
+    ],
+
+    'services' => [
+        'ip_info_token' => env('VISITOR_IP_INFO_TOKEN', null),
     ],
 ];

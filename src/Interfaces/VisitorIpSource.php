@@ -4,7 +4,7 @@ namespace FNP\ElVisitor\Interfaces;
 
 use FNP\ElVisitor\Models\Visitor;
 
-interface IpSource
+interface VisitorIpSource
 {
     public function apply(Visitor $visitor, string $ip): void;
 }

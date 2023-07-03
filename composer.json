@@ -4,8 +4,7 @@
   "type": "library",
   "require": {
     "php": "^8",
-    "framesnpictures/el-module": "^0",
-    "whichbrowser/parser": "^2.1"
+    "framesnpictures/el-module": "^0"
   },
   "require-dev": {
     "orchestra/testbench": "^6 || ^7 || ^8"

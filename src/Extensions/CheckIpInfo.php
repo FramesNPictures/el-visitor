@@ -1,21 +1,25 @@
 <?php
 
-namespace FNP\ElVisitor\Sources;
+namespace FNP\ElVisitor\Extensions;
 
 use Carbon\Carbon;
 use Fnp\ElHelper\Obj;
-use FNP\ElVisitor\Interfaces\IpSource;
+use FNP\ElVisitor\Interfaces\VisitorIpSource;
 use FNP\ElVisitor\Models\Visitor;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class IpInfo implements IpSource
+class CheckIpInfo implements VisitorIpSource
 {
     public function apply(Visitor $visitor, string $ip): void
     {
-        $this->ip = $ip;
+        $token = config('visitor.services.ip_info_token');
+
+        if (!$token) {
+            return;
+        }
 
         try {
             if (Str::startsWith($ip, ['10.', '192.168.', '172.16'])) {
@@ -26,8 +30,8 @@ class IpInfo implements IpSource
             $data = Cache::remember(
                 Obj::key(__CLASS__, $ip),
                 Carbon::now()->addDays(365),
-                function () use ($ip) {
-                    $r = Http::get('ipinfo.io/'.$ip.'?token='.env('IPINFO_IO_TOKEN'));
+                function () use ($ip, $token) {
+                    $r = Http::get('ipinfo.io/' . $ip . '?token=' . $token);
                     return json_decode($r->body(), true);
                 },
             );

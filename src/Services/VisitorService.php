@@ -2,6 +2,8 @@
 
 namespace FNP\ElVisitor\Services;
 
+use FNP\ElVisitor\Interfaces\VisitorIpSource;
+use FNP\ElVisitor\Interfaces\VisitorUaSource;
 use FNP\ElVisitor\Models\Visitor;
 use Illuminate\Http\Request;
 use Nette\Utils\DateTime;
@@ -39,26 +41,15 @@ class VisitorService
         $this->visitor->uri       = $request->getUri();
         $this->visitor->referer   = $request->headers->get('referer');
 
-        // User agent parsing
-        $parser                        = new Parser(getallheaders());
-        $this->visitor->browserName    = $parser?->browser?->name;
-        $this->visitor->browserVersion = $parser?->browser?->version?->toString();
-        $this->visitor->browserEngine  = $parser?->engine?->name;
-        $this->visitor->osName         = $parser?->os?->name;
-        $this->visitor->osVersion      = $parser?->os?->version?->toString();
-        $this->visitor->osAlias        = $parser?->os?->alias;
-        $this->visitor->osFamily       = $parser?->os?->family?->name;
-        $this->visitor->deviceModel    = $parser?->device?->model;
-        $this->visitor->deviceMake     = $parser?->device?->manufacturer;
-        $this->visitor->deviceType     = $parser?->device->type;
-
-
         // IpInfo
-        $ipSourceClass = config('visitor.ip.source');
-
-        if ($ipSourceClass) {
+        foreach(config('visitor.extensions') as $ipSourceClass) {
             $ipSource = new $ipSourceClass();
-            $ipSource->apply($this->visitor, $ips[0]);
+            if ($ipSource instanceof VisitorIpSource) {
+                $ipSource->apply($this->visitor, $ips[0]);
+            }
+            if ($ipSource instanceof VisitorUaSource) {
+                $ipSource->apply($this->visitor, $this->visitor->userAgent);
+            }
         }
     }
 
