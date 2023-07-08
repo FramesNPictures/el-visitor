@@ -29,7 +29,6 @@ class ElVisitorModule extends ElModule
 
     public function setupWebApplication(Application $application)
     {
-        dd('Testing0001');
         $application['router']->pushMiddlewareToGroup('web', VisitorMiddleware::class);
     }
 
