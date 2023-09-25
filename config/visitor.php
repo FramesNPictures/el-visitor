@@ -15,8 +15,4 @@ return [
         //    'token' => env('VISITOR_IP_INFO_TOKEN', null),
         //],
     ],
-
-    'services' => [
-        'ip_info_token' => env('VISITOR_IP_INFO_TOKEN', null),
-    ],
 ];
