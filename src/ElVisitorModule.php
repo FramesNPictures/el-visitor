@@ -34,6 +34,10 @@ class ElVisitorModule extends ElModule
 
     public function defineConfigMergeFiles(): array
     {
+        $this->publishes([
+            __DIR__.'/../config/visitor.php' => config_path('visitor.php'),
+        ], 'config');
+
         return [
             'visitor' => __DIR__.'/../config/visitor.php',
         ];
