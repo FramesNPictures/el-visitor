@@ -4,14 +4,23 @@ namespace FNP\ElVisitor\Plugins;
 
 use FNP\ElVisitor\Interfaces\VisitorPlugin;
 use FNP\ElVisitor\Models\Visitor;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Ramsey\Uuid\Uuid;
 
 class ProvideBasicVisitorData implements VisitorPlugin
 {
+    private Request $request;
+
+    public function __construct(Request $request)
+    {
+        $this->request = $request;
+    }
+
     public function apply(Visitor $visitor): void
     {
         // Token
-        $visitor->token = $_COOKIE['APP_TOKEN'] ?? Uuid::uuid4();
+        $visitor->token = $this->request->cookie(config('visitor.cookie'), Uuid::uuid4()->toString());
 
         // IP
         $visitor->ip = $_SERVER['REMOTE_ADDR'] ?? $visitor->ip;
@@ -28,5 +37,8 @@ class ProvideBasicVisitorData implements VisitorPlugin
 
         // RequestId
         $visitor->requestId = Uuid::uuid4()->toString();
+
+        // Store token
+        Cookie::queue(config('visitor.cookie'), $visitor->token, 365 * 24 * 60);
     }
 }
