@@ -4,17 +4,14 @@ namespace FNP\ElVisitor\Services;
 
 use FNP\ElVisitor\Interfaces\VisitorPlugin;
 use FNP\ElVisitor\Models\Visitor;
-use Illuminate\Http\Request;
 use Nette\Utils\DateTime;
-use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Cookie;
-use WhichBrowser\Parser;
 
 class VisitorService
 {
     protected Visitor $visitor;
 
-    public function __construct(Request $request)
+    public function __construct()
     {
         $this->visitor      = new Visitor();
 

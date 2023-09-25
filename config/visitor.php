@@ -8,6 +8,7 @@ return [
         \FNP\ElVisitor\Plugins\ProvideBasicVisitorData::class,
         \FNP\ElVisitor\Plugins\ProvideCloudFlareIPData::class,
         \FNP\ElVisitor\Plugins\MobileBrowserDetection::class,
+        \FNP\ElVisitor\Plugins\BotCrowlerDetection::class,
     ],
 
     'services' => [
