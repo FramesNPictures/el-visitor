@@ -15,5 +15,8 @@ class ProvideCloudFlareIPData implements VisitorPlugin
 
         // Country
         $visitor->country = $_SERVER['HTTP_CF_IPCOUNTRY'] ?? $visitor->country;
+
+        // RequestID
+        $visitor->requestId = $_SERVER['HTTP_CF_RAY'] ?? $visitor->requestId;
     }
 }

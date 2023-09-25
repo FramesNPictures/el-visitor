@@ -25,5 +25,8 @@ class ProvideBasicVisitorData implements VisitorPlugin
 
         // Referer
         $visitor->referer = $_SERVER['HTTP_REFERER'] ?? $visitor->referer;
+
+        // RequestId
+        $visitor->requestId = Uuid::uuid4()->toString();
     }
 }
