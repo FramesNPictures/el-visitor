@@ -16,10 +16,19 @@ class VisitorService
         $this->visitor      = new Visitor();
 
         // IpInfo
-        foreach(config('visitor.plugins') as $pluginClass) {
-            $pluginClass = app($pluginClass);
-            if ($pluginClass instanceof VisitorPlugin) {
-                $pluginClass->apply($this->visitor);
+        foreach(config('visitor.plugins') as $pluginKey=>$pluginValue) {
+
+            if (is_array($pluginValue)) {
+                $pluginClass = $pluginKey;
+            } else {
+                $pluginClass = $pluginValue;
+                $pluginValue = [];
+            }
+
+            $pluginObject = app($pluginClass, $pluginValue);
+
+            if ($pluginObject instanceof VisitorPlugin) {
+                $pluginObject->apply($this->visitor);
             }
         }
     }
