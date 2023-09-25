@@ -43,7 +43,7 @@ class VisitorService
         $response->headers->setCookie(
             new Cookie(
                 config('visitor.cookie'),
-                $this->visitor()->token,
+                $this->visitor()->visitorId,
                 new DateTime('now +400 days'),
                 '/',
             ),

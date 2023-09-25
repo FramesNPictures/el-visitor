@@ -20,7 +20,13 @@ class ProvideBasicVisitorData implements VisitorPlugin
     public function apply(Visitor $visitor): void
     {
         // Token
-        $visitor->token = $this->request->cookie(config('visitor.cookie'), Uuid::uuid4()->toString());
+        $visitor->new = false;
+        $visitor->visitorId = $this->request->cookie(config('visitor.cookie'));
+
+        if (!$visitor->visitorId) {
+            $visitor->new = true;
+            $visitor->visitorId = Uuid::uuid4()->toString();
+        }
 
         // IP
         $visitor->ip = $_SERVER['REMOTE_ADDR'] ?? $visitor->ip;
@@ -39,6 +45,6 @@ class ProvideBasicVisitorData implements VisitorPlugin
         $visitor->requestId = Uuid::uuid4()->toString();
 
         // Store token
-        Cookie::queue(config('visitor.cookie'), $visitor->token, 365 * 24 * 60);
+        Cookie::queue(config('visitor.cookie'), $visitor->visitorId, 365 * 24 * 60);
     }
 }

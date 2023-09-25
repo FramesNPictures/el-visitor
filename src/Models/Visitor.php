@@ -4,10 +4,10 @@ namespace FNP\ElVisitor\Models;
 
 class Visitor
 {
-    public ?string $ip           = null;
     public ?string $requestId    = null;
+    public ?string $visitorId    = null;
+    public ?string $ip           = null;
     public ?bool   $new          = true;
-    public ?string $token        = null;
     public ?string $userAgent    = null;
     public ?string $uri          = null;
     public ?string $referer      = null;
