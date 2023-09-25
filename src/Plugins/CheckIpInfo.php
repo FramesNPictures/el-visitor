@@ -1,19 +1,19 @@
 <?php
 
-namespace FNP\ElVisitor\Extensions;
+namespace FNP\ElVisitor\Plugins;
 
 use Carbon\Carbon;
 use Fnp\ElHelper\Obj;
-use FNP\ElVisitor\Interfaces\VisitorIpSource;
+use FNP\ElVisitor\Interfaces\VisitorPlugin;
 use FNP\ElVisitor\Models\Visitor;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class CheckIpInfo implements VisitorIpSource
+class CheckIpInfo implements VisitorPlugin
 {
-    public function apply(Visitor $visitor, string $ip): void
+    public function apply(Visitor $visitor): void
     {
         $token = config('visitor.services.ip_info_token');
 

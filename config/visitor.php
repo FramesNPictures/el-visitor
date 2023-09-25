@@ -4,10 +4,10 @@ return [
     // Visitor Token cookie name
     "cookie" => "APP-V",
 
-    "extensions" => [
-        \FNP\ElVisitor\Extensions\CheckIpInfo::class,
-        \FNP\ElVisitor\Extensions\CheckMobileBrowser::class,
-        \FNP\ElVisitor\Extensions\CheckBotCrowler::class
+    "plugins" => [
+        \FNP\ElVisitor\Plugins\ProvideBasicVisitorData::class,
+        \FNP\ElVisitor\Plugins\ProvideCloudFlareIPData::class,
+        \FNP\ElVisitor\Plugins\MobileBrowserDetection::class,
     ],
 
     'services' => [
