@@ -51,6 +51,6 @@ class BotCrowlerDetection implements VisitorPlugin
             'YandexMobileBot|yandex|yeti|Zeus/i',
             $visitor->userAgent);
 
-        $visitor->isBot = $b;
+        $visitor->isRobot = $b;
     }
 }
