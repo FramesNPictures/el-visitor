@@ -13,9 +13,10 @@ class JenssegersAgentDetection implements VisitorPlugin
         $agent = new Agent();
         $agent->setUserAgent($visitor->userAgent);
         $agent->setHttpHeaders($_SERVER);
-        $visitor->device   = $agent->device() ?? $visitor->device;
-        $visitor->browser  = $agent->browser() ?? $visitor->browser;
-        $visitor->platform = $agent->platform() ?? $visitor->platform;
-        $visitor->isRobot  = $agent->isRobot() ?? $visitor->isRobot;
+        $visitor->device    = $agent->device() ?? $visitor->device;
+        $visitor->browser   = $agent->browser() ?? $visitor->browser;
+        $visitor->platform  = $agent->platform() ?? $visitor->platform;
+        $visitor->isRobot   = $agent->isRobot() ?? $visitor->isRobot;
+        $visitor->languages = $agent->languages() ?? $visitor->languages;
     }
 }

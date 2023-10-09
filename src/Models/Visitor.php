@@ -12,6 +12,7 @@ class Visitor
     public ?string $browser      = null;
     public ?string $device       = null;
     public ?string $platform     = null;
+    public array   $languages    = [];
     public ?string $uri          = null;
     public ?string $referer      = null;
     public ?string $city         = null;
