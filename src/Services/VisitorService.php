@@ -7,15 +7,23 @@ use FNP\ElVisitor\Models\Visitor;
 use Nette\Utils\DateTime;
 use Symfony\Component\HttpFoundation\Cookie;
 
-class VisitorService
+class VisitorService implements VisitorPlugin
 {
     protected Visitor $visitor;
 
     public function __construct()
     {
         $this->visitor      = new Visitor();
+        $this->apply($this->visitor);
+    }
 
-        // IpInfo
+    public function visitor(): Visitor
+    {
+        return $this->visitor;
+    }
+
+    public function apply(Visitor $visitor): void
+    {
         foreach(config('visitor.plugins') as $pluginKey=>$pluginValue) {
 
             if (is_array($pluginValue)) {
@@ -31,11 +39,6 @@ class VisitorService
                 $pluginObject->apply($this->visitor);
             }
         }
-    }
-
-    public function visitor(): Visitor
-    {
-        return $this->visitor;
     }
 
     public function storeToken($response): void

@@ -1,6 +1,6 @@
 <?php
 
-namespace FNP\ElVisitor\Plugins;
+namespace FNP\ElVisitor\Plugins\Services;
 
 use Carbon\Carbon;
 use Fnp\ElHelper\Obj;
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class LocationProvidedByIpinfoIO implements VisitorPlugin
+class LocationByIpinfoIO implements VisitorPlugin
 {
     protected ?string $token = null;
 

@@ -24,5 +24,8 @@ class Visitor
     public ?string $timezone     = null;
     public bool    $isRobot      = false;
     public bool    $isMobile     = false;
+    public bool    $isTor = false;
+    public int     $abuseScore = 0;
+    public int     $abuseReports = 0;
     public array   $extra        = [];
 }
