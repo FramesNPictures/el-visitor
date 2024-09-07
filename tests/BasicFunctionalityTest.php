@@ -24,13 +24,15 @@ class BasicFunctionalityTest extends Orchestra\Testbench\TestCase
     public function test_getting_data()
     {
         $_SERVER['REMOTE_ADDR'] = '132.198.200.196';
+        $_SERVER['REMOTE_ADDR'] = '23.228.130.134';
+        $_SERVER['REMOTE_ADDR'] = '62.210.243.153';
+        $_SERVER['REMOTE_ADDR'] = '2607:fb90:e33c:c367:8c19:2ff:fe47:d1bb';
+//        $_SERVER['REMOTE_ADDR'] = '2603:7080:b700:9f4c:fd84:4e0e:3f68:4c7c';
+//        $_SERVER['REMOTE_ADDR'] = '2.24.127.161';
 
         /** @var \FNP\ElVisitor\Services\VisitorService $s */
         $s = app(\FNP\ElVisitor\Services\VisitorService::class);
         $v = $s->visitor();
-//        (new \FNP\ElVisitor\Plugins\Services\LocationByIpinfoIO(env('TOKEN_IPINFO')))->apply($v);
-//        (new \FNP\ElVisitor\Plugins\Services\DataByAbuseIPDB(env('TOKEN_ABUSEIP')))->apply($v);
-        (new \FNP\ElVisitor\Plugins\Services\DataByLocalDatabase())->apply($v);
 
         dd($v);
     }

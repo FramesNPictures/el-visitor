@@ -10,7 +10,7 @@ return [
         \FNP\ElVisitor\Plugins\MobileBrowserDetection::class,
         \FNP\ElVisitor\Plugins\BotCrowlerDetection::class,
         \FNP\ElVisitor\Plugins\JenssegersAgentDetection::class,
+        \FNP\ElVisitor\Plugins\RecogniseIPVersion::class,
         \FNP\ElVisitor\Plugins\Services\DataByLocalDatabase::class,
-        \FNP\ElVisitor\Plugins\Services\LocationByDbIpCom::class,
     ],
 ];

@@ -7,6 +7,7 @@ class Visitor
     public ?string $requestId = null;
     public ?string $visitorId = null;
     public ?string $ip = null;
+    public ?int $ipVersion = null;
     public ?bool $new = true;
     public ?string $userAgent = null;
     public ?string $browser = null;
@@ -20,6 +21,8 @@ class Visitor
     public ?string $country = null;
     public ?string $location = null;
     public ?string $organisation = null;
+    public ?int $providerId = null;
+    public ?string $providerName = null;
     public ?string $postcode = null;
     public ?string $timezone = null;
     public ?bool $isRobot = null;
