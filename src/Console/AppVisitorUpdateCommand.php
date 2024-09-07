@@ -15,6 +15,6 @@ class AppVisitorUpdateCommand extends Command
         $rootFolder = realpath(__DIR__ . '/../..');
 
         $this->info('Updating local IP geolocation databases...');
-        shell_exec('cd "' . $rootFolder . '" && .scripts/update.sh');
+        shell_exec('cd "' . $rootFolder . '" && ./scripts/update.sh');
     }
 }
