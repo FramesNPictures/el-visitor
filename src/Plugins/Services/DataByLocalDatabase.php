@@ -69,6 +69,12 @@ class DataByLocalDatabase implements VisitorPlugin
 
         $reader = new Reader($databasePath);
         $data = $reader->get($visitor->ip);
+
+        if (is_null($data)) {
+            $reader->close();
+            return;
+        }
+
         $apply($visitor, $data);
         $reader->close();
     }
