@@ -9,8 +9,10 @@
     "maxmind-db/reader": "~1.0"
   },
   "require-dev": {
-    "orchestra/testbench": "^6 || ^7 || ^8",
-    "guzzlehttp/guzzle": "^7.9"
+    "orchestra/testbench": "^6 || ^7 || ^8 || ^9",
+    "guzzlehttp/guzzle": "^7.9",
+    "laravel/pint": "^1.24",
+    "rector/rector": "^1.2"
   },
   "autoload": {
     "psr-4": {
