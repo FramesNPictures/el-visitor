@@ -1,18 +1,30 @@
-#!/bin/zsh
+#!/bin/sh
 
+# Change to the project root directory
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+cd "$SCRIPT_DIR/.."
+
+# Ensure data directory exists and change to it
+mkdir -p data
 cd data
 
-if [ ! -d ip-location-db ]
-then
-  git clone https://github.com/sapics/ip-location-db.git
-else
-  cd ip-location-db
-  git pull
-  cd ..
-fi
+REPO_URL="https://raw.githubusercontent.com/sapics/ip-location-db/main"
 
-cp -f ip-location-db/dbip-city-mmdb/dbip-city-ipv4.mmdb ./
-cp -f ip-location-db/dbip-city-mmdb/dbip-city-ipv6.mmdb ./
-cp -f ip-location-db/geolite2-city-mmdb/geolite2-city-ipv4.mmdb ./
-cp -f ip-location-db/geolite2-city-mmdb/geolite2-city-ipv6.mmdb ./
-cp -f ip-location-db/asn-mmdb/*.mmdb ./
+# Download files directly
+echo "Downloading dbip-city-ipv4.mmdb..."
+curl -L -o dbip-city-ipv4.mmdb "$REPO_URL/dbip-city-mmdb/dbip-city-ipv4.mmdb"
+
+echo "Downloading dbip-city-ipv6.mmdb..."
+curl -L -o dbip-city-ipv6.mmdb "$REPO_URL/dbip-city-mmdb/dbip-city-ipv6.mmdb"
+
+echo "Downloading geolite2-city-ipv4.mmdb..."
+curl -L -o geolite2-city-ipv4.mmdb "$REPO_URL/geolite2-city-mmdb/geolite2-city-ipv4.mmdb"
+
+echo "Downloading geolite2-city-ipv6.mmdb..."
+curl -L -o geolite2-city-ipv6.mmdb "$REPO_URL/geolite2-city-mmdb/geolite2-city-ipv6.mmdb"
+
+echo "Downloading asn-ipv4.mmdb..."
+curl -L -o asn-ipv4.mmdb "$REPO_URL/asn-mmdb/asn-ipv4.mmdb"
+
+echo "Downloading asn-ipv6.mmdb..."
+curl -L -o asn-ipv6.mmdb "$REPO_URL/asn-mmdb/asn-ipv6.mmdb"
