@@ -10,20 +10,16 @@ use Ramsey\Uuid\Uuid;
 
 class ProvideBasicVisitorData implements VisitorPlugin
 {
-    private Request $request;
-
-    public function __construct(Request $request)
-    {
-        $this->request = $request;
-    }
+    public function __construct(private Request $request) {}
 
     public function apply(Visitor $visitor): void
     {
         // Token
         $visitor->new = false;
-        $visitor->visitorId = $this->request->cookie(config('visitor.cookie'));
+        $visitorId = $this->request->cookie(config('visitor.cookie'));
+        $visitor->visitorId = is_array($visitorId) ? reset($visitorId) : $visitorId;
 
-        if (!$visitor->visitorId) {
+        if (! $visitor->visitorId) {
             $visitor->new = true;
             $visitor->visitorId = Uuid::uuid4()->toString();
         }
