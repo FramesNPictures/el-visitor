@@ -1,20 +1,24 @@
-#!/bin/zsh
+#!/bin/sh
 
-if [[ $1 != '' ]]
+# Change to the project root directory
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+cd "$SCRIPT_DIR/.."
+
+if [ "$1" != "" ]
 then
-    if [[ -f $1 && $1 == *.php ]]
+    if [ -f "$1" ] && echo "$1" | grep -q '\.php$'
     then
-        vendor/bin/rector process $1
-        vendor/bin/pint $1
+        vendor/bin/rector process "$1"
+        vendor/bin/pint "$1"
     else
         echo "Error: File '$1' does not exist or is not a PHP file."
     fi
 else
     for f in `git status -s | cut -c4-`; do
         echo "Processing $f ...";
-        if [[ -f $f && $f == *.php ]]
+        if [ -f "$f" ] && echo "$f" | grep -q '\.php$'
         then
-            vendor/bin/rector process $f
+            vendor/bin/rector process "$f"
         else
             echo "Skipping $f: File does not exist or is not a PHP file."
         fi
