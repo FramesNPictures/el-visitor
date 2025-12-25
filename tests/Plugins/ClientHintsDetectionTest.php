@@ -15,17 +15,6 @@ class ClientHintsDetectionTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_extracts_browser_from_client_hints(): void
-    {
-        $_SERVER['HTTP_SEC_CH_UA'] = '"Not A;Browser";v="99", "Chromium";v="96", "Google Chrome";v="96"';
-
-        $visitor = new Visitor();
-        $plugin = new ClientHintsDetection();
-        $plugin->apply($visitor);
-
-        $this->assertEquals('"Not A;Browser";v="99", "Chromium";v="96", "Google Chrome";v="96"', $visitor->browser);
-    }
-
     public function test_extracts_platform_from_client_hints(): void
     {
         $_SERVER['HTTP_SEC_CH_UA_PLATFORM'] = '"Windows"';

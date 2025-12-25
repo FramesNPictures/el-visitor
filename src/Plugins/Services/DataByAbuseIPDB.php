@@ -33,12 +33,16 @@ class DataByAbuseIPDB implements VisitorPlugin
 
             $data = Cache::remember(
                 Obj::key(self::class, $ip),
-                Carbon::now()->addDays(365),
+                Carbon::now()->addDays(7),
                 function () use ($ip) {
                     $r = Http::withHeaders([
                         'Accept' => 'application/json',
                         'Key' => $this->token,
                     ])->get('https://api.abuseipdb.com/api/v2/check', ['ipAddress' => $ip]);
+
+                    if ($r->failed()) {
+                        throw new Exception('AbuseIPDB API request failed with status ' . $r->status() . ' : ' . $r->body());
+                    }
 
                     return json_decode($r->body(), true);
                 },

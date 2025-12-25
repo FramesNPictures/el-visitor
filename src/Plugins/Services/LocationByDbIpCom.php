@@ -33,7 +33,7 @@ class LocationByDbIpCom implements VisitorPlugin
 
             $data = Cache::remember(
                 Obj::key(self::class, $ip),
-                Carbon::now()->addDays(365),
+                Carbon::now()->addDays(7),
                 function () use ($ip) {
                     $r = Http::get('https://api.db-ip.com/v2/' . $this->token . '/' . $ip);
 
