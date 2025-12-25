@@ -9,8 +9,8 @@ class RecogniseIPVersion implements VisitorPlugin
 {
     public function apply(Visitor $visitor): void
     {
-        if (!is_null($visitor->ip)) {
-            $visitor->ipVersion = strpos($visitor->ip, ':') > 0 ? 6 : 4;
+        if (! is_null($visitor->ip)) {
+            $visitor->ipVersion = str_contains($visitor->ip, ':') ? 6 : 4;
         }
     }
 }
