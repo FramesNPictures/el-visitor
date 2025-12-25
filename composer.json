@@ -19,6 +19,11 @@
       "FNP\\ElVisitor\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "FNP\\ElVisitor\\Tests\\": "tests/"
+    }
+  },
   "authors": [
     {
       "name": "Chris Cynarski",
