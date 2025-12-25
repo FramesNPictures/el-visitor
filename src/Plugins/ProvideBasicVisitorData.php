@@ -19,7 +19,7 @@ class ProvideBasicVisitorData implements VisitorPlugin
         $visitorId = $this->request->cookie(config('visitor.cookie'));
         $visitor->visitorId = is_array($visitorId) ? reset($visitorId) : $visitorId;
 
-        if (! $visitor->visitorId) {
+        if ( ! $visitor->visitorId) {
             $visitor->new = true;
             $visitor->visitorId = Uuid::uuid4()->toString();
         }

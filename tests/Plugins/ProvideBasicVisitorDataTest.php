@@ -9,6 +9,13 @@ use Illuminate\Http\Request;
 
 class ProvideBasicVisitorDataTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        unset($_SERVER['REMOTE_ADDR'], $_SERVER['REQUEST_URI'], $_SERVER['HTTP_USER_AGENT'], $_SERVER['HTTP_REFERER']);
+
+        parent::tearDown();
+    }
+
     public function test_it_sets_basic_visitor_data(): void
     {
         $_SERVER['REMOTE_ADDR'] = '1.2.3.4';
@@ -17,7 +24,7 @@ class ProvideBasicVisitorDataTest extends TestCase
         $_SERVER['HTTP_REFERER'] = 'https://example.com';
 
         $request = Request::create('/test-path', 'GET');
-        $visitor = new Visitor;
+        $visitor = new Visitor();
         $plugin = new ProvideBasicVisitorData($request);
 
         $plugin->apply($visitor);
@@ -36,20 +43,11 @@ class ProvideBasicVisitorDataTest extends TestCase
         $visitorId = 'existing-visitor-id';
         $request = Request::create('/', 'GET', [], [config('visitor.cookie') => $visitorId]);
 
-        $visitor = new Visitor;
+        $visitor = new Visitor();
         $plugin = new ProvideBasicVisitorData($request);
         $plugin->apply($visitor);
 
         $this->assertEquals($visitorId, $visitor->visitorId);
         $this->assertFalse($visitor->new);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($_SERVER['REMOTE_ADDR']);
-        unset($_SERVER['REQUEST_URI']);
-        unset($_SERVER['HTTP_USER_AGENT']);
-        unset($_SERVER['HTTP_REFERER']);
-        parent::tearDown();
     }
 }

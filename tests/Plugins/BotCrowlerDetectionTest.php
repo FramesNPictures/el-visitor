@@ -8,20 +8,6 @@ use FNP\ElVisitor\Tests\TestCase;
 
 class BotCrowlerDetectionTest extends TestCase
 {
-    /**
-     * @dataProvider botUserAgents
-     */
-    public function test_it_detects_bots($userAgent, $expected): void
-    {
-        $visitor = new Visitor;
-        $visitor->userAgent = $userAgent;
-
-        $plugin = new BotCrowlerDetection;
-        $plugin->apply($visitor);
-
-        $this->assertEquals($expected, $visitor->isRobot);
-    }
-
     public static function botUserAgents()
     {
         return [
@@ -31,5 +17,19 @@ class BotCrowlerDetectionTest extends TestCase
             ['curl/7.64.1', true],
             [null, null],
         ];
+    }
+
+    /**
+     * @dataProvider botUserAgents
+     */
+    public function test_it_detects_bots($userAgent, $expected): void
+    {
+        $visitor = new Visitor();
+        $visitor->userAgent = $userAgent;
+
+        $plugin = new BotCrowlerDetection();
+        $plugin->apply($visitor);
+
+        $this->assertEquals($expected, $visitor->isRobot);
     }
 }

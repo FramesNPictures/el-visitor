@@ -13,7 +13,7 @@ class VisitorService implements VisitorPlugin
 
     public function __construct()
     {
-        $this->visitor      = new Visitor();
+        $this->visitor = new Visitor();
         $this->apply($this->visitor);
     }
 
@@ -24,7 +24,7 @@ class VisitorService implements VisitorPlugin
 
     public function apply(Visitor $visitor): void
     {
-        foreach(config('visitor.plugins') as $pluginKey=>$pluginValue) {
+        foreach (config('visitor.plugins') as $pluginKey => $pluginValue) {
 
             if (is_array($pluginValue)) {
                 $pluginClass = $pluginKey;

@@ -9,7 +9,7 @@ class MobileBrowserDetection implements VisitorPlugin
 {
     public function apply(Visitor $visitor): void
     {
-        if (!$visitor->userAgent) {
+        if ( ! $visitor->userAgent) {
             return;
         }
 
@@ -20,7 +20,8 @@ class MobileBrowserDetection implements VisitorPlugin
             '|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/' .
             '|plucker|pocket|psp|series(4|6)0|symbian|treo' .
             '|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i',
-            $visitor->userAgent);
+            $visitor->userAgent
+        );
 
         $m2 = preg_match(
             '/1207|6310|6590|3gso|4thp|50[1-6]i|770s' .
@@ -54,7 +55,8 @@ class MobileBrowserDetection implements VisitorPlugin
             '|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)' .
             '|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )' .
             '|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i',
-            substr($visitor->userAgent, 0, 4));
+            substr($visitor->userAgent, 0, 4)
+        );
 
         $visitor->isMobile = $m1 || $m2;
     }

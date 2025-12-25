@@ -3,6 +3,7 @@
 namespace FNP\ElVisitor\Plugins\Services;
 
 use Carbon\Carbon;
+use Exception;
 use Fnp\ElHelper\Arr;
 use Fnp\ElHelper\Obj;
 use FNP\ElVisitor\Interfaces\VisitorPlugin;
@@ -14,16 +15,11 @@ use Illuminate\Support\Str;
 
 class DataByAbuseIPDB implements VisitorPlugin
 {
-    protected ?string $token = null;
-
-    public function __construct(?string $token)
-    {
-        $this->token = $token;
-    }
+    public function __construct(protected ?string $token) {}
 
     public function apply(Visitor $visitor): void
     {
-        if (!$this->token) {
+        if ( ! $this->token) {
             return;
         }
 
@@ -36,13 +32,14 @@ class DataByAbuseIPDB implements VisitorPlugin
             }
 
             $data = Cache::remember(
-                Obj::key(__CLASS__, $ip),
+                Obj::key(self::class, $ip),
                 Carbon::now()->addDays(365),
                 function () use ($ip) {
                     $r = Http::withHeaders([
                         'Accept' => 'application/json',
                         'Key' => $this->token,
                     ])->get('https://api.abuseipdb.com/api/v2/check', ['ipAddress' => $ip]);
+
                     return json_decode($r->body(), true);
                 },
             );
@@ -56,7 +53,7 @@ class DataByAbuseIPDB implements VisitorPlugin
                 'domain' => Arr::get($data, 'data.domain'),
                 'hostnames' => Arr::get($data, 'data.hostnames', []),
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::warning('Problem obtaining AbuseIPDB', [$e->getMessage()]);
         }
     }

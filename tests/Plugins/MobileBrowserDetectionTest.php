@@ -8,20 +8,6 @@ use FNP\ElVisitor\Tests\TestCase;
 
 class MobileBrowserDetectionTest extends TestCase
 {
-    /**
-     * @dataProvider mobileUserAgents
-     */
-    public function test_it_detects_mobile_browsers($userAgent, $expected): void
-    {
-        $visitor = new Visitor;
-        $visitor->userAgent = $userAgent;
-
-        $plugin = new MobileBrowserDetection;
-        $plugin->apply($visitor);
-
-        $this->assertEquals($expected, $visitor->isMobile);
-    }
-
     public static function mobileUserAgents()
     {
         return [
@@ -31,5 +17,19 @@ class MobileBrowserDetectionTest extends TestCase
             ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', false],
             [null, null],
         ];
+    }
+
+    /**
+     * @dataProvider mobileUserAgents
+     */
+    public function test_it_detects_mobile_browsers($userAgent, $expected): void
+    {
+        $visitor = new Visitor();
+        $visitor->userAgent = $userAgent;
+
+        $plugin = new MobileBrowserDetection();
+        $plugin->apply($visitor);
+
+        $this->assertEquals($expected, $visitor->isMobile);
     }
 }

@@ -3,6 +3,7 @@
 namespace FNP\ElVisitor\Plugins\Services;
 
 use Carbon\Carbon;
+use Exception;
 use Fnp\ElHelper\Arr;
 use Fnp\ElHelper\Obj;
 use FNP\ElVisitor\Interfaces\VisitorPlugin;
@@ -14,16 +15,11 @@ use Illuminate\Support\Str;
 
 class LocationByDbIpCom implements VisitorPlugin
 {
-    protected ?string $token = null;
-
-    public function __construct(?string $token = 'free')
-    {
-        $this->token = $token;
-    }
+    public function __construct(protected ?string $token = 'free') {}
 
     public function apply(Visitor $visitor): void
     {
-        if (!$this->token) {
+        if ( ! $this->token) {
             return;
         }
 
@@ -36,18 +32,19 @@ class LocationByDbIpCom implements VisitorPlugin
             }
 
             $data = Cache::remember(
-                Obj::key(__CLASS__, $ip),
+                Obj::key(self::class, $ip),
                 Carbon::now()->addDays(365),
                 function () use ($ip) {
                     $r = Http::get('https://api.db-ip.com/v2/' . $this->token . '/' . $ip);
+
                     return json_decode($r->body(), true);
                 },
             );
 
             $visitor->city = Arr::get($data, 'city', $visitor->city);
             $visitor->region = Arr::get($data, 'stateProv', $visitor->region);
-            $visitor->country = Arr::get($data,'countryCode', $visitor->country);
-        } catch (\Exception $e) {
+            $visitor->country = Arr::get($data, 'countryCode', $visitor->country);
+        } catch (Exception $e) {
             Log::warning('Could not obtain data from db-ip.com', [$e->getMessage()]);
         }
     }

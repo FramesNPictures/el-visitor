@@ -3,6 +3,7 @@
 namespace FNP\ElVisitor\Plugins\Services;
 
 use Carbon\Carbon;
+use Exception;
 use Fnp\ElHelper\Obj;
 use FNP\ElVisitor\Interfaces\VisitorPlugin;
 use FNP\ElVisitor\Models\Visitor;
@@ -13,16 +14,11 @@ use Illuminate\Support\Str;
 
 class LocationByIpinfoIO implements VisitorPlugin
 {
-    protected ?string $token = null;
-
-    public function __construct(?string $token)
-    {
-        $this->token = $token;
-    }
+    public function __construct(protected ?string $token) {}
 
     public function apply(Visitor $visitor): void
     {
-        if (!$this->token) {
+        if ( ! $this->token) {
             return;
         }
 
@@ -35,23 +31,24 @@ class LocationByIpinfoIO implements VisitorPlugin
             }
 
             $data = Cache::remember(
-                Obj::key(__CLASS__, $ip),
+                Obj::key(self::class, $ip),
                 Carbon::now()->addDays(365),
                 function () use ($ip) {
                     $r = Http::get('ipinfo.io/' . $ip . '?token=' . $this->token);
+
                     return json_decode($r->body(), true);
                 },
             );
 
-            $visitor->ip           = $ip;
-            $visitor->city         = $data['city'] ?? $visitor->city;
-            $visitor->region       = $data['region'] ?? $visitor->region;
-            $visitor->country      = $data['country'] ?? $visitor->country;
-            $visitor->location     = $data['loc'] ?? $visitor->location;
+            $visitor->ip = $ip;
+            $visitor->city = $data['city'] ?? $visitor->city;
+            $visitor->region = $data['region'] ?? $visitor->region;
+            $visitor->country = $data['country'] ?? $visitor->country;
+            $visitor->location = $data['loc'] ?? $visitor->location;
             $visitor->organisation = $data['org'] ?? $visitor->organisation;
-            $visitor->postcode     = $data['postal'] ?? $visitor->postcode;
-            $visitor->timezone     = $data['timezone'] ?? $visitor->timezone;
-        } catch (\Exception $e) {
+            $visitor->postcode = $data['postal'] ?? $visitor->postcode;
+            $visitor->timezone = $data['timezone'] ?? $visitor->timezone;
+        } catch (Exception $e) {
             Log::warning('Problem obtaining IPInfo.io', [$e->getMessage()]);
         }
     }

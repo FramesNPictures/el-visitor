@@ -9,7 +9,7 @@ class BotCrowlerDetection implements VisitorPlugin
 {
     public function apply(Visitor $visitor): void
     {
-        if (!$visitor->userAgent) {
+        if ( ! $visitor->userAgent) {
             return;
         }
 
@@ -49,7 +49,8 @@ class BotCrowlerDetection implements VisitorPlugin
             'WebMechanic|WebMoose|webquest|webreaper|webspider|webs|WebWalker|WebZip|' .
             'wget|whowhere|winona|wlm|WOLP|woriobot|WWWC|XGET|xing|yahoo|YandexBot|' .
             'YandexMobileBot|yandex|yeti|Zeus/i',
-            $visitor->userAgent);
+            $visitor->userAgent
+        );
 
         $visitor->isRobot = $b;
     }

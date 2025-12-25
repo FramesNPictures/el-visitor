@@ -7,10 +7,10 @@ use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
 {
-    protected function defineEnvironment($app)
+    protected function defineEnvironment($app): void
     {
         tap($app['config'], function (Repository $config): void {
-            $config->set('visitor', require __DIR__.'/../config/visitor.php');
+            $config->set('visitor', require __DIR__ . '/../config/visitor.php');
         });
     }
 }

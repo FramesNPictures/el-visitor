@@ -12,17 +12,15 @@ use FNP\ElVisitor\Services\VisitorService;
 
 class ElVisitorModule extends ElModule
 {
-    use ModuleSingletons;
     use ModuleConfigMerge;
     use ModuleConsoleCommands;
+    use ModuleSingletons;
 
     public function defineSingletons(): array
     {
         return [
             VisitorService::class => VisitorService::class,
-            Visitor::class => function () {
-                return app(VisitorService::class)->visitor();
-            },
+            Visitor::class => fn () => app(VisitorService::class)->visitor(),
         ];
     }
 

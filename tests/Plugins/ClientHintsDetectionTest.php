@@ -8,12 +8,19 @@ use FNP\ElVisitor\Tests\TestCase;
 
 class ClientHintsDetectionTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        unset($_SERVER['HTTP_SEC_CH_UA'], $_SERVER['HTTP_SEC_CH_UA_PLATFORM'], $_SERVER['HTTP_SEC_CH_UA_MOBILE']);
+
+        parent::tearDown();
+    }
+
     public function test_extracts_browser_from_client_hints(): void
     {
         $_SERVER['HTTP_SEC_CH_UA'] = '"Not A;Browser";v="99", "Chromium";v="96", "Google Chrome";v="96"';
 
-        $visitor = new Visitor;
-        $plugin = new ClientHintsDetection;
+        $visitor = new Visitor();
+        $plugin = new ClientHintsDetection();
         $plugin->apply($visitor);
 
         $this->assertEquals('"Not A;Browser";v="99", "Chromium";v="96", "Google Chrome";v="96"', $visitor->browser);
@@ -23,8 +30,8 @@ class ClientHintsDetectionTest extends TestCase
     {
         $_SERVER['HTTP_SEC_CH_UA_PLATFORM'] = '"Windows"';
 
-        $visitor = new Visitor;
-        $plugin = new ClientHintsDetection;
+        $visitor = new Visitor();
+        $plugin = new ClientHintsDetection();
         $plugin->apply($visitor);
 
         $this->assertEquals('Windows', $visitor->platform);
@@ -34,8 +41,8 @@ class ClientHintsDetectionTest extends TestCase
     {
         $_SERVER['HTTP_SEC_CH_UA_MOBILE'] = '?1';
 
-        $visitor = new Visitor;
-        $plugin = new ClientHintsDetection;
+        $visitor = new Visitor();
+        $plugin = new ClientHintsDetection();
         $plugin->apply($visitor);
 
         $this->assertTrue($visitor->isMobile);
@@ -43,13 +50,5 @@ class ClientHintsDetectionTest extends TestCase
         $_SERVER['HTTP_SEC_CH_UA_MOBILE'] = '?0';
         $plugin->apply($visitor);
         $this->assertFalse($visitor->isMobile);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($_SERVER['HTTP_SEC_CH_UA']);
-        unset($_SERVER['HTTP_SEC_CH_UA_PLATFORM']);
-        unset($_SERVER['HTTP_SEC_CH_UA_MOBILE']);
-        parent::tearDown();
     }
 }
