@@ -42,6 +42,8 @@ class Visitor
 
     public ?string $providerName = null;
 
+    public ?string $providerType = null;
+
     public ?string $postcode = null;
 
     public ?string $timezone = null;
@@ -51,6 +53,8 @@ class Visitor
     public ?bool $isMobile = null;
 
     public ?bool $isTor = null;
+
+    public ?bool $isDataCenter = null;
 
     public int $abuseScore = 0;
 

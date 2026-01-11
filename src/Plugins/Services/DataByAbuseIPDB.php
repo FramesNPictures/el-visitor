@@ -53,6 +53,9 @@ class DataByAbuseIPDB implements VisitorPlugin
             $visitor->abuseScore = Arr::get($data, 'data.abuseConfidenceScore', $visitor->abuseScore);
             $visitor->abuseReports = Arr::get($data, 'data.totalReports', $visitor->abuseReports);
             $visitor->isTor = Arr::get($data, 'data.isTor', $visitor->isTor);
+            $visitor->providerName = Arr::get($data, 'data.isp', $visitor->providerName);
+            $visitor->providerType = Arr::get($data, 'data.usageType', $visitor->providerType);
+            $visitor->isDataCenter = Str::contains($visitor->providerName, 'Data Center');
             $visitor->extra = array_merge($visitor->extra, [
                 'domain' => Arr::get($data, 'data.domain'),
                 'hostnames' => Arr::get($data, 'data.hostnames', []),
