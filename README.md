@@ -31,6 +31,15 @@ php artisan vendor:publish --provider="FNP\ElVisitor\ElVisitorModule" --tag=conf
 
 This creates `config/visitor.php`.
 
+Finally, download the local IP databases. They are **not shipped with the package**, so this step
+is required for geolocation and ASN lookups to return anything:
+
+```bash
+php artisan app:visitor:update
+```
+
+See [Local IP databases](#local-ip-databases) for how to wire this into a deployment.
+
 ## Usage
 
 The package registers two singletons, so you can resolve either the service or the resolved
@@ -176,24 +185,47 @@ class MyPlugin implements VisitorPlugin
 
 ## Local IP databases
 
-The MMDB files in [`data/`](data/) back the `DataByLocalDatabase` plugin. IPv4 and IPv6 have
-separate files, and the ASN, GeoLite2 city and DB-IP city databases are consulted in that order.
-Missing or unreadable files are skipped silently, so the package keeps working without them — the
-geolocation fields simply stay `null`.
+The MMDB files in `data/` back the `DataByLocalDatabase` plugin. IPv4 and IPv6 have separate
+files, and the ASN, GeoLite2 city and DB-IP city databases are consulted in that order.
 
-Because the files are large binaries they are tracked with [Git LFS](https://git-lfs.com/).
-
-To refresh them:
+**The databases are not distributed with this package.** Together they are close to 200 MB and are
+rebuilt upstream daily to monthly, so committing them would bloat the repository and ship stale
+data. Fetch them as a deployment step instead:
 
 ```bash
 php artisan app:visitor:update
 ```
 
-which runs [`usr/update-mmdb`](usr/update-mmdb) to download the latest builds.
+This runs [`usr/update-mmdb`](usr/update-mmdb), which downloads the current builds into the
+package's `data/` directory, verifies each file before replacing the previous one, and exits
+non-zero if any download fails.
+
+### Deploying
+
+The databases live inside the installed package (`vendor/framesnpictures/el-visitor/data/`). If
+your deployment builds `vendor/` from scratch — the usual case for `composer install` on a fresh
+release directory — **the databases must be downloaded on every deploy**. Add the command after
+your install step:
+
+```bash
+composer install --no-dev --optimize-autoloader
+php artisan app:visitor:update
+```
+
+Two things to keep in mind:
+
+- The command needs network access and a writable `vendor/` directory. It exits non-zero on
+  failure, so it will fail a deployment loudly rather than silently shipping empty databases.
+- Refreshing occasionally is worthwhile even on long-lived installs: DB-IP rebuilds monthly and
+  GeoLite2 twice weekly, so the data drifts.
+
+If the files are absent, the plugin degrades gracefully — every lookup is skipped and the
+geolocation and ASN fields simply stay `null`. Nothing throws, which also means a failed download
+is easy to miss; treat a non-zero exit from `app:visitor:update` as a deployment failure.
 
 ## IP data credits
 
-The databases in [`data/`](data/) are **not produced by this package**. They are compiled and
+The databases downloaded into `data/` are **not produced by this package**. They are compiled and
 published by [**sapics/ip-location-db**](https://github.com/sapics/ip-location-db), which converts
 several freely available IP datasets into MMDB format. Full credit for this data goes to that
 project and to the upstream data providers below.
@@ -226,6 +258,11 @@ GeoLite2 is additionally governed by MaxMind's
 ## Development
 
 ```bash
-composer test    # run the Pest test suite
-composer lint    # check formatting with Laravel Pint
+./usr/update-mmdb   # download the IP databases (needed once, before testing)
+composer test       # run the Pest test suite
+composer lint       # check formatting with Laravel Pint
 ```
+
+The two `DataByLocalDatabase` tests assert against real database lookups. They are skipped rather
+than failed when the databases have not been downloaded, so the suite is green on a fresh
+checkout — run `./usr/update-mmdb` to exercise them.

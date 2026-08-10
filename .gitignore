@@ -5,3 +5,7 @@
 /bootstrap
 /storage
 /.phpunit.result.cache
+
+# IP databases are fetched at deploy time, not committed.
+# Run: php artisan app:visitor:update
+/data/*.mmdb
