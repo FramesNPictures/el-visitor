@@ -1,35 +1,19 @@
 <?php
 
-namespace FNP\ElVisitor\Tests\Plugins;
-
 use FNP\ElVisitor\Models\Visitor;
 use FNP\ElVisitor\Plugins\RecogniseIPVersion;
-use FNP\ElVisitor\Tests\TestCase;
 
-class RecogniseIPVersionTest extends TestCase
-{
-    public static function ipVersions()
-    {
-        return [
-            ['127.0.0.1', 4],
-            ['8.8.8.8', 4],
-            ['2001:4860:4860::8888', 6],
-            ['::1', 6],
-            [null, null],
-        ];
-    }
+it('recognises the ip version', function (?string $ip, ?int $expectedVersion): void {
+    $visitor = new Visitor();
+    $visitor->ip = $ip;
 
-    /**
-     * @dataProvider ipVersions
-     */
-    public function test_it_recognizes_ip_version($ip, $expectedVersion): void
-    {
-        $visitor = new Visitor();
-        $visitor->ip = $ip;
+    (new RecogniseIPVersion())->apply($visitor);
 
-        $plugin = new RecogniseIPVersion();
-        $plugin->apply($visitor);
-
-        $this->assertEquals($expectedVersion, $visitor->ipVersion);
-    }
-}
+    expect($visitor->ipVersion)->toBe($expectedVersion);
+})->with([
+    ['127.0.0.1', 4],
+    ['8.8.8.8', 4],
+    ['2001:4860:4860::8888', 6],
+    ['::1', 6],
+    [null, null],
+]);

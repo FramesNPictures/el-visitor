@@ -2,3 +2,6 @@
 /vendor
 /composer.lock
 .env
+/bootstrap
+/storage
+/.phpunit.result.cache

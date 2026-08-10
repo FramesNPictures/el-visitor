@@ -1,39 +1,31 @@
 <?php
 
-namespace FNP\ElVisitor\Tests\Plugins;
-
 use FNP\ElVisitor\Models\Visitor;
 use FNP\ElVisitor\Plugins\Services\DataByLocalDatabase;
-use FNP\ElVisitor\Tests\TestCase;
 
-class DataByLocalDatabaseTest extends TestCase
-{
-    public function test_it_resolves_data_from_local_database_ipv4(): void
-    {
-        $visitor = new Visitor();
-        $visitor->ip = '1.1.1.1';
-        $visitor->ipVersion = 4;
+it('resolves data from the local database for ipv4', function (): void {
+    $visitor = new Visitor();
+    $visitor->ip = '1.1.1.1';
+    $visitor->ipVersion = 4;
 
-        $plugin = new DataByLocalDatabase();
-        $plugin->apply($visitor);
+    (new DataByLocalDatabase())->apply($visitor);
 
-        // Based on 1.1.1.1, we expect Cloudflare
-        $this->assertEquals(13335, $visitor->providerId);
-        $this->assertEquals('Cloudflare, Inc.', $visitor->providerName);
-        $this->assertEquals('AU', $visitor->country);
-    }
+    // Based on 1.1.1.1, we expect Cloudflare
+    expect($visitor->providerId)->toBe(13335)
+        ->and($visitor->providerName)->toBe('Cloudflare, Inc.')
+        ->and($visitor->country)->toBe('AU')
+        ->and($visitor->region)->toBe('New South Wales');
+});
 
-    public function test_it_resolves_data_from_local_database_ipv6(): void
-    {
-        $visitor = new Visitor();
-        $visitor->ip = '2606:4700:4700::1111';
-        $visitor->ipVersion = 6;
+it('resolves data from the local database for ipv6', function (): void {
+    $visitor = new Visitor();
+    $visitor->ip = '2606:4700:4700::1111';
+    $visitor->ipVersion = 6;
 
-        $plugin = new DataByLocalDatabase();
-        $plugin->apply($visitor);
+    (new DataByLocalDatabase())->apply($visitor);
 
-        $this->assertEquals(13335, $visitor->providerId);
-        $this->assertEquals('Cloudflare, Inc.', $visitor->providerName);
-        $this->assertEquals('CA', $visitor->country);
-    }
-}
+    expect($visitor->providerId)->toBe(13335)
+        ->and($visitor->providerName)->toBe('Cloudflare, Inc.')
+        ->and($visitor->country)->toBe('CA')
+        ->and($visitor->region)->toBe('Quebec');
+});

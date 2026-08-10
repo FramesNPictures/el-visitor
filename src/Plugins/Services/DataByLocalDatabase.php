@@ -22,13 +22,13 @@ class DataByLocalDatabase implements VisitorPlugin
                 $this->applyDatabase($visitor, 'geolite2-city-ipv4.mmdb', function (Visitor $visitor, array $data): void {
                     $visitor->city = Arr::get($data, 'city', $visitor->city);
                     $visitor->country = Arr::get($data, 'country_code', $visitor->country);
-                    $visitor->region = Arr::get($data, 'state1', $visitor->postcode);
+                    $visitor->region = Arr::get($data, 'state1', $visitor->region);
                 });
 
                 $this->applyDatabase($visitor, 'dbip-city-ipv4.mmdb', function (Visitor $visitor, array $data): void {
                     $visitor->city = Arr::get($data, 'city', $visitor->city);
                     $visitor->country = Arr::get($data, 'country_code', $visitor->country);
-                    $visitor->region = Arr::get($data, 'state1', $visitor->postcode);
+                    $visitor->region = Arr::get($data, 'state1', $visitor->region);
                 });
             }
 
@@ -41,13 +41,13 @@ class DataByLocalDatabase implements VisitorPlugin
                 $this->applyDatabase($visitor, 'geolite2-city-ipv6.mmdb', function (Visitor $visitor, array $data): void {
                     $visitor->city = Arr::get($data, 'city', $visitor->city);
                     $visitor->country = Arr::get($data, 'country_code', $visitor->country);
-                    $visitor->region = Arr::get($data, 'state1', $visitor->postcode);
+                    $visitor->region = Arr::get($data, 'state1', $visitor->region);
                 });
 
                 $this->applyDatabase($visitor, 'dbip-city-ipv6.mmdb', function (Visitor $visitor, array $data): void {
                     $visitor->city = Arr::get($data, 'city', $visitor->city);
                     $visitor->country = Arr::get($data, 'country_code', $visitor->country);
-                    $visitor->region = Arr::get($data, 'state1', $visitor->postcode);
+                    $visitor->region = Arr::get($data, 'state1', $visitor->region);
                 });
             }
 

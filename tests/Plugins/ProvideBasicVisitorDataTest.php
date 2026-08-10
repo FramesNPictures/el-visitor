@@ -1,53 +1,40 @@
 <?php
 
-namespace FNP\ElVisitor\Tests\Plugins;
-
 use FNP\ElVisitor\Models\Visitor;
 use FNP\ElVisitor\Plugins\ProvideBasicVisitorData;
-use FNP\ElVisitor\Tests\TestCase;
 use Illuminate\Http\Request;
 
-class ProvideBasicVisitorDataTest extends TestCase
-{
-    protected function tearDown(): void
-    {
-        unset($_SERVER['REMOTE_ADDR'], $_SERVER['REQUEST_URI'], $_SERVER['HTTP_USER_AGENT'], $_SERVER['HTTP_REFERER']);
+afterEach(function (): void {
+    unset($_SERVER['REMOTE_ADDR'], $_SERVER['REQUEST_URI'], $_SERVER['HTTP_USER_AGENT'], $_SERVER['HTTP_REFERER']);
+});
 
-        parent::tearDown();
-    }
+it('sets basic visitor data', function (): void {
+    $_SERVER['REMOTE_ADDR'] = '1.2.3.4';
+    $_SERVER['REQUEST_URI'] = '/test-path';
+    $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
+    $_SERVER['HTTP_REFERER'] = 'https://example.com';
 
-    public function test_it_sets_basic_visitor_data(): void
-    {
-        $_SERVER['REMOTE_ADDR'] = '1.2.3.4';
-        $_SERVER['REQUEST_URI'] = '/test-path';
-        $_SERVER['HTTP_USER_AGENT'] = 'TestAgent';
-        $_SERVER['HTTP_REFERER'] = 'https://example.com';
+    $request = Request::create('/test-path', 'GET');
+    $visitor = new Visitor();
 
-        $request = Request::create('/test-path', 'GET');
-        $visitor = new Visitor();
-        $plugin = new ProvideBasicVisitorData($request);
+    (new ProvideBasicVisitorData($request))->apply($visitor);
 
-        $plugin->apply($visitor);
+    expect($visitor->ip)->toBe('1.2.3.4')
+        ->and($visitor->uri)->toBe('/test-path')
+        ->and($visitor->userAgent)->toBe('TestAgent')
+        ->and($visitor->referer)->toBe('https://example.com')
+        ->and($visitor->visitorId)->not->toBeNull()
+        ->and($visitor->requestId)->not->toBeNull()
+        ->and($visitor->new)->toBeTrue();
+});
 
-        $this->assertEquals('1.2.3.4', $visitor->ip);
-        $this->assertEquals('/test-path', $visitor->uri);
-        $this->assertEquals('TestAgent', $visitor->userAgent);
-        $this->assertEquals('https://example.com', $visitor->referer);
-        $this->assertNotNull($visitor->visitorId);
-        $this->assertNotNull($visitor->requestId);
-        $this->assertTrue($visitor->new);
-    }
+it('recognises a returning visitor from the cookie', function (): void {
+    $visitorId = 'existing-visitor-id';
+    $request = Request::create('/', 'GET', [], [config('visitor.cookie') => $visitorId]);
 
-    public function test_it_recognizes_returning_visitor_from_cookie(): void
-    {
-        $visitorId = 'existing-visitor-id';
-        $request = Request::create('/', 'GET', [], [config('visitor.cookie') => $visitorId]);
+    $visitor = new Visitor();
+    (new ProvideBasicVisitorData($request))->apply($visitor);
 
-        $visitor = new Visitor();
-        $plugin = new ProvideBasicVisitorData($request);
-        $plugin->apply($visitor);
-
-        $this->assertEquals($visitorId, $visitor->visitorId);
-        $this->assertFalse($visitor->new);
-    }
-}
+    expect($visitor->visitorId)->toBe($visitorId)
+        ->and($visitor->new)->toBeFalse();
+});

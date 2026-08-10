@@ -1,43 +1,30 @@
 <?php
 
-namespace FNP\ElVisitor\Tests\Plugins;
-
 use FNP\ElVisitor\Models\Visitor;
 use FNP\ElVisitor\Plugins\ProvideCloudFlareIPData;
-use FNP\ElVisitor\Tests\TestCase;
 
-class ProvideCloudFlareIPDataTest extends TestCase
-{
-    protected function tearDown(): void
-    {
-        unset($_SERVER['HTTP_CF_CONNECTING_IP'], $_SERVER['HTTP_CF_FORWARDED_FOR'], $_SERVER['HTTP_CF_IPCOUNTRY'], $_SERVER['HTTP_CF_RAY']);
+afterEach(function (): void {
+    unset($_SERVER['HTTP_CF_CONNECTING_IP'], $_SERVER['HTTP_CF_FORWARDED_FOR'], $_SERVER['HTTP_CF_IPCOUNTRY'], $_SERVER['HTTP_CF_RAY']);
+});
 
-        parent::tearDown();
-    }
+it('extracts cloudflare data', function (): void {
+    $_SERVER['HTTP_CF_CONNECTING_IP'] = '1.1.1.1';
+    $_SERVER['HTTP_CF_IPCOUNTRY'] = 'US';
+    $_SERVER['HTTP_CF_RAY'] = 'ray-id-123';
 
-    public function test_it_extracts_cloudflare_data(): void
-    {
-        $_SERVER['HTTP_CF_CONNECTING_IP'] = '1.1.1.1';
-        $_SERVER['HTTP_CF_IPCOUNTRY'] = 'US';
-        $_SERVER['HTTP_CF_RAY'] = 'ray-id-123';
+    $visitor = new Visitor();
+    (new ProvideCloudFlareIPData())->apply($visitor);
 
-        $visitor = new Visitor();
-        $plugin = new ProvideCloudFlareIPData();
-        $plugin->apply($visitor);
+    expect($visitor->ip)->toBe('1.1.1.1')
+        ->and($visitor->country)->toBe('US')
+        ->and($visitor->requestId)->toBe('ray-id-123');
+});
 
-        $this->assertEquals('1.1.1.1', $visitor->ip);
-        $this->assertEquals('US', $visitor->country);
-        $this->assertEquals('ray-id-123', $visitor->requestId);
-    }
+it('extracts the cloudflare forwarded ip', function (): void {
+    $_SERVER['HTTP_CF_FORWARDED_FOR'] = '2.2.2.2';
 
-    public function test_it_extracts_cloudflare_forwarded_ip(): void
-    {
-        $_SERVER['HTTP_CF_FORWARDED_FOR'] = '2.2.2.2';
+    $visitor = new Visitor();
+    (new ProvideCloudFlareIPData())->apply($visitor);
 
-        $visitor = new Visitor();
-        $plugin = new ProvideCloudFlareIPData();
-        $plugin->apply($visitor);
-
-        $this->assertEquals('2.2.2.2', $visitor->ip);
-    }
-}
+    expect($visitor->ip)->toBe('2.2.2.2');
+});

@@ -1,30 +1,74 @@
 #!/bin/sh
+#
+# Download the local IP databases used by FNP\ElVisitor\Plugins\Services\DataByLocalDatabase.
+#
+# Source: https://github.com/sapics/ip-location-db  (see "IP data credits" in README.md)
+#
+# Upstream publishes the MMDB builds as assets on the rolling "latest" release rather than
+# as files inside the repository, so the raw.githubusercontent.com paths used previously no
+# longer resolve.
 
-# Change to the project root directory
+set -u
+
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
-cd "$SCRIPT_DIR/.."
+cd "$SCRIPT_DIR/.." || exit 1
 
-# Ensure data directory exists and change to it
 mkdir -p data
-cd data
+cd data || exit 1
 
-REPO_URL="https://raw.githubusercontent.com/sapics/ip-location-db/main"
+BASE_URL="https://github.com/sapics/ip-location-db/releases/download/latest"
 
-# Download files directly
-echo "Downloading dbip-city-ipv4.mmdb..."
-curl -L -o dbip-city-ipv4.mmdb "$REPO_URL/dbip-city-mmdb/dbip-city-ipv4.mmdb"
+# Every real database is several MB; anything smaller is an error page or a truncated download.
+MIN_BYTES=1000000
 
-echo "Downloading dbip-city-ipv6.mmdb..."
-curl -L -o dbip-city-ipv6.mmdb "$REPO_URL/dbip-city-mmdb/dbip-city-ipv6.mmdb"
+FAILED=0
 
-echo "Downloading geolite2-city-ipv4.mmdb..."
-curl -L -o geolite2-city-ipv4.mmdb "$REPO_URL/geolite2-city-mmdb/geolite2-city-ipv4.mmdb"
+download() {
+    target=$1
+    asset=$2
+    tmp="$target.download"
 
-echo "Downloading geolite2-city-ipv6.mmdb..."
-curl -L -o geolite2-city-ipv6.mmdb "$REPO_URL/geolite2-city-mmdb/geolite2-city-ipv6.mmdb"
+    printf 'Downloading %-24s <- %s\n' "$target" "$asset"
 
-echo "Downloading asn-ipv4.mmdb..."
-curl -L -o asn-ipv4.mmdb "$REPO_URL/asn-mmdb/asn-ipv4.mmdb"
+    # -f makes curl fail on HTTP errors instead of writing the error body to the file.
+    if ! curl -fsSL --retry 3 -o "$tmp" "$BASE_URL/$asset"; then
+        echo "  ERROR: download failed - keeping the existing file"
+        rm -f "$tmp"
+        FAILED=$((FAILED + 1))
+        return
+    fi
 
-echo "Downloading asn-ipv6.mmdb..."
-curl -L -o asn-ipv6.mmdb "$REPO_URL/asn-mmdb/asn-ipv6.mmdb"
+    size=$(wc -c < "$tmp" | tr -d ' ')
+
+    if [ "$size" -lt "$MIN_BYTES" ] || ! LC_ALL=C grep -qa 'MaxMind.com' "$tmp"; then
+        echo "  ERROR: not a valid MMDB file ($size bytes) - keeping the existing file"
+        rm -f "$tmp"
+        FAILED=$((FAILED + 1))
+        return
+    fi
+
+    # Only replace the previous database once the new one is known to be good.
+    mv "$tmp" "$target"
+    echo "  OK ($((size / 1048576)) MB)"
+}
+
+# ASN -> providerId / providerName.
+# origin-asn is the only upstream ASN build that carries organisation names; the
+# iptoasn / dbip / geolite2 ASN builds leave autonomous_system_organization empty.
+download asn-ipv4.mmdb           origin-asn-ipv4.mmdb
+download asn-ipv6.mmdb           origin-asn-ipv6.mmdb
+
+# City -> city / region / country
+download geolite2-city-ipv4.mmdb geolite2-city-ipv4.mmdb
+download geolite2-city-ipv6.mmdb geolite2-city-ipv6.mmdb
+download dbip-city-ipv4.mmdb     dbip-city-ipv4.mmdb
+download dbip-city-ipv6.mmdb     dbip-city-ipv6.mmdb
+
+if [ "$FAILED" -ne 0 ]; then
+    echo
+    echo "$FAILED database(s) could not be updated."
+    exit 1
+fi
+
+echo
+echo "All databases updated."

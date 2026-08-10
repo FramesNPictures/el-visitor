@@ -4,15 +4,26 @@
   "type": "library",
   "require": {
     "php": "^8",
-    "framesnpictures/el-module": "^0",
+    "framesnpictures/el-helper": "^1",
+    "framesnpictures/el-module": "^1",
     "jenssegers/agent": "^2.6",
     "maxmind-db/reader": "~1.0"
   },
   "require-dev": {
-    "orchestra/testbench": "^6 || ^7 || ^8 || ^9",
-    "guzzlehttp/guzzle": "^7.9",
-    "laravel/pint": "^1.24",
-    "rector/rector": "^1.2"
+    "orchestra/testbench": "^10 || ^11",
+    "guzzlehttp/guzzle": "^7.9 || ^8.0",
+    "laravel/pint": "^1.30",
+    "pestphp/pest": "^5.0",
+    "pestphp/pest-plugin-laravel": "^5.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "scripts": {
+    "test": "pest",
+    "lint": "pint"
   },
   "autoload": {
     "psr-4": {

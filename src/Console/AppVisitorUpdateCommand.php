@@ -10,12 +10,21 @@ class AppVisitorUpdateCommand extends Command
 
     protected $description = 'Update local IP databases';
 
-    public function handle(): void
+    public function handle(): int
     {
-        $dataFolder = __DIR__ . '/../../data';
         $rootFolder = realpath(__DIR__ . '/../..');
 
         $this->info('Updating local IP geolocation databases...');
-        shell_exec('cd "' . $rootFolder . '" && ./usr/update-mmdb');
+
+        $exitCode = 0;
+        passthru('cd ' . escapeshellarg($rootFolder) . ' && ./usr/update-mmdb', $exitCode);
+
+        if ($exitCode !== 0) {
+            $this->error('Could not update the local IP geolocation databases.');
+
+            return self::FAILURE;
+        }
+
+        return self::SUCCESS;
     }
 }
